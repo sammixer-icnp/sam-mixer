@@ -163,14 +163,14 @@
   </a>
 </nav>
 
-<h2>TL;DR</h2>
+<h2>Overview</h2>
 <p>
 LoRa signal representations shift <em>non-smoothly</em> across SNR levels, and
 a single unified decoder is structurally unable to fit all SNR regimes at
 once. <strong>SAM-Mixer</strong> resolves this by routing inputs through an
 SNR-aware Mixture-of-Experts denoiser, followed by a lightweight chirp
-classifier — yielding up to <strong>3.5 dB SNR gain over LoRaPHY</strong> at
-SF=7--9 with substantially fewer parameters at high SFs.
+classifier. The result is a consistent SNR gain over LoRaPHY across SF=7--9,
+with substantially fewer parameters at high SFs.
 </p>
 
 <h2>The Problem: Non-Smooth SNR Heterogeneity</h2>
@@ -182,14 +182,16 @@ representations at different SNR levels, and find that the SNR axis splits
 into <em>discrete distributional regimes</em> rather than a smooth gradient.
 </p>
 
-<figure>
-  <img src="figs/fid_pairwise.svg" alt="Pairwise FID matrix across SNR" style="max-width: 420px">
-  <figcaption>
-    Pairwise FID matrix across SNR levels: a tight high-SNR cluster
-    (0…−10 dB) and a tight low-SNR cluster (−20…−30 dB), separated by a sharp
-    boundary near −15 dB.
-  </figcaption>
-</figure>
+<div class="side-by-side">
+  <figure>
+    <img src="figs/fid_curve.svg" alt="FID vs 0 dB reference">
+    <figcaption>FID against a 0 dB reference rises steeply between 0 and −15 dB, then saturates below −20 dB.</figcaption>
+  </figure>
+  <figure>
+    <img src="figs/fid_pairwise.svg" alt="Pairwise FID matrix across SNR">
+    <figcaption>Pairwise FID matrix: a high-SNR cluster and a low-SNR cluster form visibly compact blocks.</figcaption>
+  </figure>
+</div>
 
 <p>
 The consequence is <strong>negative cross-regime transfer</strong>. The
@@ -238,21 +240,32 @@ classifier, scaling linearly rather than quadratically with SF.
 
 <h2>Results</h2>
 
-<div class="key-number">
-  At <strong>SF = 7</strong>, SAM-Mixer reaches SNR@10% of
-  <strong>−18.93 dB</strong>, a <strong>3.5 dB gain</strong> over LoRaPHY
-  on the same NELoRa-bench data. Gains decrease monotonically with SF
-  (3.28 dB at SF=8, 2.11 dB at SF=9), tracking the inherent processing
-  gain of higher spreading factors.
-</div>
+<p>
+On NELoRa-bench, SAM-Mixer consistently outperforms LoRaPHY, NELoRa, and
+NELoRa<sup>+</sup> in the low-to-mid SNR range across all four spreading
+factors. The gain is largest at SF=7 and shrinks monotonically as the
+spreading factor's intrinsic processing gain grows, with SAM-Mixer
+matching LoRaPHY at SF=10 over the tested SNR range.
+</p>
 
-<figure>
-  <img src="figs/sf7_result.svg" alt="SF=7 SER vs SNR" style="max-width: 480px">
-  <figcaption>
-    SER vs. SNR at SF=7 on NELoRa-bench. SAM-Mixer lowers the
-    demodulation threshold by ~3.5 dB relative to LoRaPHY.
-  </figcaption>
-</figure>
+<div class="side-by-side">
+  <figure>
+    <img src="figs/sf7_result.svg" alt="SF=7 SER vs SNR">
+    <figcaption>SF = 7</figcaption>
+  </figure>
+  <figure>
+    <img src="figs/sf8_result.svg" alt="SF=8 SER vs SNR">
+    <figcaption>SF = 8</figcaption>
+  </figure>
+  <figure>
+    <img src="figs/sf9_result.svg" alt="SF=9 SER vs SNR">
+    <figcaption>SF = 9</figcaption>
+  </figure>
+  <figure>
+    <img src="figs/sf10_result.svg" alt="SF=10 SER vs SNR">
+    <figcaption>SF = 10</figcaption>
+  </figure>
+</div>
 
 <h2>Beyond LoRa: Cross-Domain Transfer</h2>
 <p>
@@ -290,9 +303,10 @@ python evaluate.py \
     --cache   data/sf7_sample.pkl</code></pre>
 
 <p>
-Expected output: SNR@10% near <strong>−18.9 dB</strong> for SAM-Mixer at
-SF=7. See <a href="https://github.com/sammixer-icnp/sam-mixer#readme">the
-README</a> for full documentation.
+The script reports per-SNR accuracy and an SER–SNR curve for both
+SAM-Mixer and LoRaPHY, reproducing the SF=7 panel of the paper. See
+<a href="https://github.com/sammixer-icnp/sam-mixer#readme">the README</a>
+for full documentation.
 </p>
 
 <h2>Cite</h2>
