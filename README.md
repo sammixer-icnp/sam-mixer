@@ -10,8 +10,9 @@ The framework combines:
 - **ChirpMixer**: a lightweight chirp classifier with a multi-scale feature
   extractor and an axis-wise Mixer head.
 
-This release reproduces the LoRaPHY-vs.-SAM-Mixer comparison at SF=7
-(Fig. 5(a) in the paper).
+This release reproduces a subset of Fig. 7(a) in the paper — the
+LoRaPHY-vs.-SAM-Mixer comparison at SF=7. The full Fig. 7(a) also includes
+NELoRa as a learning-based baseline, which is not bundled here.
 
 ---
 
