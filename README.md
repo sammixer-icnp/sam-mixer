@@ -14,6 +14,12 @@ This release reproduces a subset of Fig. 7(a) in the paper — the
 LoRaPHY-vs.-SAM-Mixer comparison at SF=7. The full Fig. 7(a) also includes
 NELoRa as a learning-based baseline, which is not bundled here.
 
+> **Planned release upon paper acceptance.**
+> Upon acceptance, this repository will be expanded to include the full
+> training pipeline and trained checkpoints for all evaluated spreading
+> factors (SF=7--10), along with the scripts used for the ablation,
+> efficiency, and cross-domain experiments in the paper.
+
 ---
 
 ## Repository layout
