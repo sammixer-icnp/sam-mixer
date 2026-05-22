@@ -180,16 +180,14 @@ representations at different SNR levels, and find that the SNR axis splits
 into <em>discrete distributional regimes</em> rather than a smooth gradient.
 </p>
 
-<div class="side-by-side">
-  <figure>
-    <img src="figs/fid_curve.svg" alt="FID vs 0 dB reference">
-    <figcaption>FID against a 0 dB reference rises steeply between 0 and −15 dB, then saturates below −20 dB.</figcaption>
-  </figure>
-  <figure>
-    <img src="figs/fid_pairwise.svg" alt="Pairwise FID matrix across SNR">
-    <figcaption>Pairwise FID matrix: a high-SNR cluster and a low-SNR cluster form visibly compact blocks.</figcaption>
-  </figure>
-</div>
+<figure>
+  <img src="figs/fid_pairwise.svg" alt="Pairwise FID matrix across SNR" style="max-width: 420px">
+  <figcaption>
+    Pairwise FID matrix across SNR levels: a tight high-SNR cluster
+    (0…−10 dB) and a tight low-SNR cluster (−20…−30 dB) form visibly
+    compact blocks, separated by a sharp boundary near −15 dB.
+  </figcaption>
+</figure>
 
 <p>
 The consequence is <strong>negative cross-regime transfer</strong>. The
