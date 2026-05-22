@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAM-Mixer · SNR-aware MoE for Weak LoRa Decoding</title>
+<style>
+  :root {
+    --fg: #1a1a1a;
+    --muted: #555;
+    --accent: #1858a8;
+    --bg: #fff;
+    --rule: #e5e5e5;
+  }
+  html, body { background: var(--bg); color: var(--fg); }
+  body {
+    font-family: "Source Serif Pro", "Georgia", "Times New Roman", serif;
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 96px;
+  }
+  header { text-align: center; margin-bottom: 32px; }
+  h1 {
+    font-size: 28px;
+    line-height: 1.25;
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+  header .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+  header .venue {
+    color: var(--muted);
+    font-size: 15px;
+    font-style: italic;
+  }
+  nav.resources {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin: 28px 0 8px;
+  }
+  nav.resources a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--fg);
+    font-family: "Helvetica Neue", "Arial", sans-serif;
+    font-size: 14px;
+    transition: all 0.15s;
+  }
+  nav.resources a:hover {
+    background: #f6f6f6;
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  nav.resources a.primary {
+    background: var(--fg);
+    color: #fff;
+    border-color: var(--fg);
+  }
+  nav.resources a.primary:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 48px 0 12px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 6px;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 24px 0 8px;
+  }
+  p { margin: 0 0 14px; }
+  a { color: var(--accent); }
+  figure {
+    margin: 24px 0;
+    text-align: center;
+  }
+  figure img, figure object {
+    max-width: 100%;
+    height: auto;
+  }
+  figcaption {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 8px;
+    font-style: italic;
+    line-height: 1.4;
+  }
+  .side-by-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .side-by-side figure { margin: 0; }
+  pre {
+    background: #f5f5f5;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 13px;
+    overflow-x: auto;
+    font-family: "SF Mono", "Consolas", "Monaco", monospace;
+  }
+  code {
+    background: #f0f0f0;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: "SF Mono", "Consolas", "Monaco", monospace;
+    font-size: 14px;
+  }
+  pre code { background: none; padding: 0; }
+  .key-number {
+    background: #f8f8f8;
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    margin: 16px 0;
+    font-size: 15px;
+  }
+  footer {
+    margin-top: 64px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  @media (max-width: 600px) {
+    .side-by-side { grid-template-columns: 1fr; }
+    body { padding: 24px 16px 64px; }
+    h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Expert over Noise: An SNR-aware Mixture-of-Experts Framework for Weak LoRa Signal Decoding</h1>
+  <div class="subtitle">Anonymous Submission</div>
+  <div class="venue">Under review at ICNP 2026</div>
+</header>
+
+<nav class="resources">
+  <a class="primary" href="https://github.com/sammixer-icnp/sam-mixer">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    Code · GitHub
+  </a>
+</nav>
+
+<h2>TL;DR</h2>
+<p>
+LoRa signal representations shift <em>non-smoothly</em> across SNR levels, and
+a single unified decoder is structurally unable to fit all SNR regimes at
+once. <strong>SAM-Mixer</strong> resolves this by routing inputs through an
+SNR-aware Mixture-of-Experts denoiser, followed by a lightweight chirp
+classifier — yielding up to <strong>3.5 dB SNR gain over LoRaPHY</strong> at
+SF=7--9 with substantially fewer parameters at high SFs.
+</p>
+
+<h2>The Problem: Non-Smooth SNR Heterogeneity</h2>
+<p>
+Weak-signal LoRa decoders are typically trained as a single network across
+all SNR levels. But how does the signal representation actually vary with
+SNR? We measure the Fréchet Inception Distance (FID) between time-frequency
+representations at different SNR levels, and find that the SNR axis splits
+into <em>discrete distributional regimes</em> rather than a smooth gradient.
+</p>
+
+<figure>
+  <img src="figs/fid_pairwise.svg" alt="Pairwise FID matrix across SNR" style="max-width: 420px">
+  <figcaption>
+    Pairwise FID matrix across SNR levels: a tight high-SNR cluster
+    (0…−10 dB) and a tight low-SNR cluster (−20…−30 dB), separated by a sharp
+    boundary near −15 dB.
+  </figcaption>
+</figure>
+
+<p>
+The consequence is <strong>negative cross-regime transfer</strong>. The
+pairwise Pearson correlation of decoding accuracy across SNRs for a
+conventional unified neural decoder (NELoRa) shows that distant SNR regimes
+are <em>anti-correlated</em>: improving one actively degrades the other.
+</p>
+
+<div class="side-by-side">
+  <figure>
+    <img src="figs/nelora_corr.png" alt="NELoRa correlation heatmap">
+    <figcaption>NELoRa: two sharply anti-correlated blocks across SNR.</figcaption>
+  </figure>
+  <figure>
+    <img src="figs/sammixer_corr.png" alt="SAM-Mixer correlation heatmap">
+    <figcaption>SAM-Mixer softens those conflicts via expert routing.</figcaption>
+  </figure>
+</div>
+
+<h2>Our Solution: SAM-Mixer</h2>
+<p>
+SAM-Mixer is an end-to-end framework with two ideas:
+</p>
+
+<p>
+<strong>(i) SAM-Denoiser</strong> — an SNR-aware Mixture-of-Experts module.
+A lightweight SNR estimator produces a soft routing signal; a gating network
+selects the most relevant expert branches per input, plus a shared expert
+that stays active across all inputs to preserve cross-regime structure.
+</p>
+
+<p>
+<strong>(ii) ChirpMixer</strong> — a lightweight chirp classifier. A
+multi-scale convolutional front-end extracts chirp-specific spectral
+features, and an axis-wise MLP-Mixer head replaces the dense fully-connected
+classifier, scaling linearly rather than quadratically with SF.
+</p>
+
+<figure>
+  <img src="figs/sysoverview.svg" alt="SAM-Mixer system overview">
+  <figcaption>
+    System overview: SAM-Denoiser (top) routes the STFT through an SNR-aware
+    MoE, then ChirpMixer (bottom) classifies the denoised chirp.
+  </figcaption>
+</figure>
+
+<h2>Results</h2>
+
+<div class="key-number">
+  At <strong>SF = 7</strong>, SAM-Mixer reaches SNR@10% of
+  <strong>−18.93 dB</strong>, a <strong>3.5 dB gain</strong> over LoRaPHY
+  on the same NELoRa-bench data. Gains decrease monotonically with SF
+  (3.28 dB at SF=8, 2.11 dB at SF=9), tracking the inherent processing
+  gain of higher spreading factors.
+</div>
+
+<figure>
+  <img src="figs/sf7_result.svg" alt="SF=7 SER vs SNR" style="max-width: 480px">
+  <figcaption>
+    SER vs. SNR at SF=7 on NELoRa-bench. SAM-Mixer lowers the
+    demodulation threshold by ~3.5 dB relative to LoRaPHY.
+  </figcaption>
+</figure>
+
+<h2>Beyond LoRa: Cross-Domain Transfer</h2>
+<p>
+The same architecture, training pipeline, and hyperparameters transfer to
+<em>underwater acoustic chirp detection</em> (Neusos task) with no domain
+adaptation. SAM-Mixer outperforms the purpose-built Neusos baseline by
+<strong>+9.4 pp at the toughest −24 dB condition</strong>, suggesting that
+SNR-aware expert routing is a property of chirp-based communication broadly,
+not LoRa-specific.
+</p>
+
+<figure>
+  <img src="figs/underwater.svg" alt="Underwater chirp detection accuracy" style="max-width: 480px">
+  <figcaption>
+    Cross-domain validation: SAM-Mixer (no per-medium tuning) vs. Neusos
+    (purpose-built underwater detector).
+  </figcaption>
+</figure>
+
+<h2>Try It Yourself</h2>
+<p>
+The repository ships with the SF=7 checkpoint, a NELoRa-bench symbol cache,
+and a single-script evaluation that reproduces the LoRaPHY-vs.-SAM-Mixer
+comparison:
+</p>
+
+<pre><code>git clone https://github.com/sammixer-icnp/sam-mixer.git
+cd sam-mixer
+git lfs pull
+pip install -r requirements.txt
+
+python evaluate.py \
+    --config configs/sf7.yaml \
+    --weights weights/sf7.pt \
+    --cache   data/sf7_sample.pkl</code></pre>
+
+<p>
+Expected output: SNR@10% near <strong>−18.9 dB</strong> for SAM-Mixer at
+SF=7. See <a href="https://github.com/sammixer-icnp/sam-mixer#readme">the
+README</a> for full documentation.
+</p>
+
+<h2>Cite</h2>
+<p>
+Citation information will be provided after the review period concludes.
+</p>
+
+<footer>
+  Anonymous submission. Code released under the Apache 2.0 License.
+</footer>
+
+</body>
+</html>
