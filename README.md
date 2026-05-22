@@ -95,7 +95,7 @@ Common options:
 
 Gaussian noise is added by `evaluate.py` at the requested SNR; the underlying
 symbols are the same ones used in the original NELoRa benchmark
-([source](https://github.com/hanqingguo/NELoRa-Sensys)).
+([source](https://github.com/daibiaoxuwu/NeLoRa_Dataset)).
 
 To regenerate the cache from raw NELoRa-bench `.bin` files, point `--data` at
 the dataset root instead of `--cache`.

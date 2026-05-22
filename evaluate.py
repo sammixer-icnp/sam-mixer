@@ -212,6 +212,13 @@ def main():
         cache = os.path.join(args.output, f'cache_sf{sf}.pkl')
         datax, datay = load_data(args.data, num_samples, num_classes, downchirp,
                                  cache_path=cache)
+    if len(datax) == 0:
+        raise SystemExit(
+            'No symbols loaded. If you intended to use the bundled cache, '
+            'pass `--cache data/sf7_sample.pkl` instead of `--data`. '
+            '`--data` expects the raw NELoRa-bench directory '
+            '(<subfolder>/<truth_idx>_*.bin).'
+        )
     print(f'[*] Loaded {len(datax)} symbols')
 
     dataset = TensorDataset(torch.stack(datax),
