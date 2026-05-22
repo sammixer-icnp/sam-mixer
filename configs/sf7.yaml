@@ -1,0 +1,24 @@
+# SAM-Mixer configuration for SF=7
+#
+# Only fields required by evaluate.py / SNRExpert / SNRNet / ChirpMixer are
+# kept here. Training-specific settings (optimizer, scheduler, wandb, etc.)
+# have been stripped.
+
+sf: 7
+bw: 125000.0     # bandwidth in Hz
+fs: 1000000      # sampling frequency in Hz
+
+# SAM-Denoiser (SNR-aware MoE) hyperparameters
+SNRNet:
+  lstm_dim: 400
+  fc1_dim:  600
+  num_snr_classes: 32
+  num_experts: 4
+  topk: 3
+
+# ChirpMixer (lightweight chirp classifier) hyperparameters
+ChirpMixer:
+  out_dim_t: 17
+  out_dim_f_downsample1: 4
+  out_dim_f_downsample2: 8
+  out_dim_chl: 16
